@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-
+const validator = require('validator')
 const Userschema = new mongoose.Schema({
     name: {
         type: String,
@@ -16,13 +16,18 @@ const Userschema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Please enter your Email"],
-        minlength: 6,
+        validate: {
+            validator: validator.isEmail,
+            message: 'Please provide valid email'
+        },
+        minlength: 3,
+        maxlength: 20,
     },
-    role:{
+    role: {
         type: String,
-        enum:['admin','user'],
-        default:'user'
+        enum: ['admin', 'user'],
+        default: 'user'
     }
 })
 
-module.exports= mongoose.model('User',Userschema)
+module.exports = mongoose.model('User', Userschema)
