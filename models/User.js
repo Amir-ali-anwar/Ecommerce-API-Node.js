@@ -29,5 +29,12 @@ const Userschema = new mongoose.Schema({
         default: 'user'
     }
 })
+Userschema.pre('save', async function () {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(salt)
+});
+Userschema.methods.comparePassword = async function (candiatePassword) {
+    return await bcrypt.compare(candiatePassword, this.password);
+}
 
 module.exports = mongoose.model('User', Userschema)
