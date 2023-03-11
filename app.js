@@ -4,6 +4,7 @@ const express = require('express');
 const morgan=require('morgan')
 require('express-async-errors')
 const connectDB = require('./db/connect');
+const cookieParser = require("cookie-parser");
 // importing middlewares
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHanlderMiddleware = require("./middleware/error-handler");
@@ -12,6 +13,7 @@ const authRoutes= require('./routes/authRoutes')
 // Packages
 const app = express()
 app.use(morgan('tiny'));
+app.use(cookieParser(process.env.JWT_SECRET))
 // Middlewares
 app.use(express.json())
 
