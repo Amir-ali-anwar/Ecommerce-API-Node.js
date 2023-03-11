@@ -14,8 +14,9 @@ const register = async (req, res) => {
   const isFirstUser = await User.countDocuments({}) === 0;
   const role = isFirstUser ? "admin" : "user";
   const user = await User.create({ name, email, password, role })
-  const token= CreateJWT({user})
-  res.status(StatusCodes.CREATED).json({ user},token)
+  const tokendata= {name:user.name,email:user.email,role:user.role,userID:user._id}
+  const token= CreateJWT({payload:tokendata})
+  res.status(StatusCodes.CREATED).json({ tokendata,token})
 
 }
 const login = async (req, res) => {
