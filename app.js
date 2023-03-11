@@ -9,7 +9,8 @@ const cookieParser = require("cookie-parser");
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHanlderMiddleware = require("./middleware/error-handler");
 // importing Routes
-const authRoutes= require('./routes/authRoutes')
+const authRoutes= require('./routes/authRoutes');
+const userRoutes= require('./routes/userRoutes')
 // Packages
 const app = express()
 app.use(morgan('tiny'));
@@ -18,6 +19,7 @@ app.use(cookieParser(process.env.JWT_SECRET))
 app.use(express.json())
 
 app.use('/api/v1/auth',authRoutes)
+app.use('/api/v1/users',userRoutes)
 
 // Error handler middlewares
 app.use(notFoundMiddleware)
