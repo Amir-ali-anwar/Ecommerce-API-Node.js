@@ -50,9 +50,6 @@ const logout = async (req, res) => {
   res.status(StatusCodes.CREATED).json({msg:'user logged out !' });
 }
 
-
-
-
 module.exports = {
   register,
   login,
