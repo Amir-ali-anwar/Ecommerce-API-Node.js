@@ -1,3 +1,4 @@
+// importing Packages
 require('dotenv').config();
 const express = require('express');
 const morgan=require('morgan')
@@ -6,11 +7,17 @@ const connectDB = require('./db/connect');
 // importing middlewares
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHanlderMiddleware = require("./middleware/error-handler");
-const app = express()
+// importing Routes
+const authRoutes= require('./routes/authRoutes')
 // Packages
+const app = express()
 app.use(morgan('tiny'));
 // Middlewares
 app.use(express.json())
+
+app.use('/api/v1/auth',authRoutes)
+
+// Error handler middlewares
 app.use(notFoundMiddleware)
 app.use(errorHanlderMiddleware)
 
