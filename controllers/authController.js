@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("../errors");
-const { attachCookiesToResponse } = require('../utils/index')
+const { attachCookiesToResponse,createUserToken } = require('../utils/index')
 const register = async (req, res) => {
   const { name, email, password } = req.body
   if (!name || !email || !password) {
@@ -14,7 +14,7 @@ const register = async (req, res) => {
   const isFirstUser = await User.countDocuments({}) === 0;
   const role = isFirstUser ? "admin" : "user";
   const user = await User.create({ name, email, password, role })
-  const tokendata = { name: user.name, email: user.email, role: user.role, userID: user._id }
+  const tokendata = createUserToken(user)
   const token = attachCookiesToResponse({ res, user: tokendata })
   res.status(StatusCodes.CREATED).json({ tokendata, token })
   
@@ -25,7 +25,6 @@ const login = async (req, res) => {
     throw new CustomAPIError.BadRequestError("Please provide Email and Password")
   }
   const isExist = await User.findOne({ email });
-  console.log(isExist);
   if (!isExist) {
     throw new CustomAPIError.UnauthenticatedError("invalid credentails")
   }
@@ -33,11 +32,7 @@ const login = async (req, res) => {
   if (!isPasswordCorrect) {
     throw new CustomAPIError.UnauthenticatedError("Password not Correct")
   }
-  const tokenUser = {
-    name: isExist.name,
-    userId: isExist._id,
-    role: isExist.role,
-  }
+  const tokenUser = createUserToken(isExist)
   const token = attachCookiesToResponse({ res, user: tokenUser })
   res.status(StatusCodes.CREATED).json({ tokenUser, token })
   
