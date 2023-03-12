@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("../errors");
 const User = require("../models/User");
+const { attachCookiesToResponse, createUserToken } = require('../utils/index')
 const getAllUsers = async (req, res) => {
     const users = await User.find({ role: 'user' }).select('-passwprd');
     res.status(StatusCodes.CREATED).json({ users, nbHits: users.length })
@@ -19,10 +20,20 @@ const showCurrentUser = async (req, res) => {
 
 }
 const UpdateUser = async (req, res) => {
-    res.send("UpdateUser")
+    // console.log(req.user.userId);
+    const { email, name } = req.body;
+    if (!email || !name) {
+        throw new CustomAPIError.BadRequestError("please provide Email and Name")
+    }
+    const user = await User.findOne({ _id: req.user.userId });
+    user.email = email;
+    user.name = name;
+    await user.save();
+   const token= createUserToken(user);
+   attachCookiesToResponse({ res, user: token });
+   res.status(StatusCodes.OK).json({ tokendata, token })
 }
 const UpdateUserPassword = async (req, res) => {
-    console.log(req.user);
     const { oldPassword, newPassword } = req.body;
     if (!oldPassword || !newPassword) {
         throw new CustomAPIError.BadRequestError(
@@ -33,7 +44,7 @@ const UpdateUserPassword = async (req, res) => {
     const isPasswordCorrect = await user.comparePassword(oldPassword);
     if (!isPasswordCorrect) {
         throw new CustomAPIError.UnauthenticatedError("Invalid password");
-    }
+   }
     user.password = newPassword;
     await user.save();
     res.status(StatusCodes.OK).json({ msg: "Successfully Updated Password" });
