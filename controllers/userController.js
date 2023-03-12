@@ -3,7 +3,7 @@ const CustomAPIError = require("../errors");
 const User = require("../models/User");
 const getAllUsers = async (req, res) => {
     const users = await User.find({ role: 'user' }).select('-passwprd');
-    res.status(StatusCodes.CREATED).json({ users, nbHits:users.length })
+    res.status(StatusCodes.CREATED).json({ users, nbHits: users.length })
 }
 const getSingleUser = async (req, res) => {
     const id = req.params.id;
@@ -25,6 +25,6 @@ const UpdateUserPassword = async (req, res) => {
     res.send("UpdateUserPassword")
 }
 
-module.exports={
-    getAllUsers,getSingleUser,UpdateUser,UpdateUserPassword,showCurrentUser
+module.exports = {
+    getAllUsers, getSingleUser, UpdateUser, UpdateUserPassword, showCurrentUser
 }
