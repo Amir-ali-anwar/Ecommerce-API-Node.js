@@ -15,16 +15,30 @@ const getSingleUser = async (req, res) => {
 }
 
 const showCurrentUser = async (req, res) => {
-    res.status(StatusCodes.OK).json({ user:req.user });
+    res.status(StatusCodes.OK).json({ user: req.user });
 
 }
 const UpdateUser = async (req, res) => {
     res.send("UpdateUser")
 }
 const UpdateUserPassword = async (req, res) => {
-    res.send("UpdateUserPassword")
-}
-
+    console.log(req.user);
+    const { oldPassword, newPassword } = req.body;
+    if (!oldPassword || !newPassword) {
+        throw new CustomAPIError.BadRequestError(
+            "Please provide old and new password"
+        );
+    }
+    const user = await User.findOne({ _id: req.user.userId });
+    const isPasswordCorrect = await user.comparePassword(oldPassword);
+    if (!isPasswordCorrect) {
+        throw new CustomAPIError.UnauthenticatedError("Invalid password");
+    }
+    user.password = newPassword;
+    await user.save();
+    res.status(StatusCodes.OK).json({ msg: "Successfully Updated Password" });
+};
+ 
 module.exports = {
     getAllUsers, getSingleUser, UpdateUser, UpdateUserPassword, showCurrentUser
 }
