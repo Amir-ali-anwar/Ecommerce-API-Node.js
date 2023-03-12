@@ -1,9 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
 const CustomAPIError = require("../errors");
 const User = require("../models/User");
-const { attachCookiesToResponse, createUserToken } = require('../utils/index')
+const { attachCookiesToResponse, createUserToken,checkPermissions } = require('../utils/index')
 const getAllUsers = async (req, res) => {
-    const users = await User.find({ role: 'user' }).select('-passwprd');
+    const users = await User.find({ role: 'user' }).select('-password');
     res.status(StatusCodes.CREATED).json({ users, nbHits: users.length })
 }
 const getSingleUser = async (req, res) => {
@@ -12,6 +12,7 @@ const getSingleUser = async (req, res) => {
     if (!singleUser) {
         throw new CustomAPIError.NotFoundError(`Not found item with the id "${id}"`)
     }
+    checkPermissions(req.user,singleUser._id)
     res.status(StatusCodes.OK).json({ singleUser });
 }
 
@@ -21,7 +22,6 @@ const showCurrentUser = async (req, res) => {
 
 }
 const UpdateUser = async (req, res) => {
-    // console.log(req.user.userId);
     const { email, name } = req.body;
     if (!email || !name) {
         throw new CustomAPIError.BadRequestError("please provide Email and Name")

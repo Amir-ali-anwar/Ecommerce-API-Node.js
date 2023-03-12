@@ -6,8 +6,8 @@ const authenticateUser = async (req, res, next) => {
     throw new CustomAPIError.UnauthenticatedError("Authetication invalid");
   }
   try {
-    const { name, UserId, role,email } = isValidToken({ token })
-    req.user = { name, UserId, role,email };
+    const { name, UserId, role,Email } = isValidToken({ token })
+    req.user = { name, UserId, role,Email };
 
   } catch (error) {
     throw new CustomAPIError.UnauthenticatedError("Authetication invalid");
