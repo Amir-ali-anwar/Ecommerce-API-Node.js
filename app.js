@@ -11,6 +11,7 @@ const errorHanlderMiddleware = require("./middleware/error-handler");
 // importing Routes
 const authRoutes= require('./routes/authRoutes');
 const userRoutes= require('./routes/userRoutes')
+const productRoutes= require('./routes/productRoutes')
 // Packages
 const app = express()
 app.use(morgan('tiny'));
@@ -20,6 +21,7 @@ app.use(express.json())
 
 app.use('/api/v1/auth',authRoutes)
 app.use('/api/v1/users',userRoutes)
+app.use('/api/v1/products',productRoutes)
 
 // Error handler middlewares
 app.use(notFoundMiddleware)
