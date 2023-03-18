@@ -10,7 +10,7 @@ const createProduct = async (req, res) => {
 }
 const getAllProduct = async (req, res) => {
     const product = await Product.find({})
-    res.status(StatusCodes.OK).json({ product, nbHits:product.length})
+    res.status(StatusCodes.OK).json({ product, nbHits: product.length })
 
 }
 const getSingleProduct = async (req, res) => {
@@ -25,7 +25,13 @@ const updateProduct = async (req, res) => {
     res.send('updateProduct')
 }
 const deleteProduct = async (req, res) => {
-    res.send('deleteProduct')
+    const id = req.params.id;
+    const product = await Product.findOne({ _id: id })
+    if (!product) {
+        throw new CustomAPIError.NotFoundError("Product not found with the id")
+    }
+    await product.remove();
+    res.status(StatusCodes.OK).json({ msg: "Success! Product Removed" })
 }
 const uploadImage = async (req, res) => {
     res.send('uploadImage')
