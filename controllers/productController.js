@@ -17,18 +17,26 @@ const getSingleProduct = async (req, res) => {
     const id = req.params.id;
     const product = await Product.findById({ _id: id })
     if (!product) {
-        throw new CustomAPIError.NotFoundError("Product not found with the id")
+        throw new CustomAPIError.NotFoundError(`Product not found with the id: ${id}`)
     }
     res.status(StatusCodes.OK).json({ product, nbHits: product.length })
 }
 const updateProduct = async (req, res) => {
-    res.send('updateProduct')
+    const id = req.params.id;
+    const product=  await Product.findOneAndUpdate({_id:id},req.body,{
+        runValidators:true,
+        new:true,
+    })
+    if (!product) {
+        throw new CustomAPIError.NotFoundError(`Product not found with the id: ${id}`)
+    }
+    res.status(StatusCodes.OK).json({ product });
 }
 const deleteProduct = async (req, res) => {
     const id = req.params.id;
     const product = await Product.findOne({ _id: id })
     if (!product) {
-        throw new CustomAPIError.NotFoundError("Product not found with the id")
+        throw new CustomAPIError.NotFoundError(`Product not found with the id: ${id}`)
     }
     await product.remove();
     res.status(StatusCodes.OK).json({ msg: "Success! Product Removed" })
