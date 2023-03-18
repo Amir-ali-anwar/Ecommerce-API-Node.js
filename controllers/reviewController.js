@@ -3,6 +3,7 @@ const Product = require('../models/Prouducts')
 const Review = require('../models/Review')
 const CustomAPIError = require("../errors");
 const { StatusCodes } = require("http-status-codes");
+const { checkPermissions } = require('../utils');
 const createReview = async (req, res) => {
    const {product:productId}=req.body
    const {UserId}=req.user
@@ -24,7 +25,7 @@ const createReview = async (req, res) => {
    res.status(StatusCodes.CREATED).json({ review }); 
 }
 const getAllReviews = async (req, res) => {
-    const reviews= await Review.findOne({})
+    const reviews= await Review.find({})
     res.status(StatusCodes.OK).json({ reviews,count:reviews.length }); 
 }
 const getSingleReview= async(req,res)=>{
@@ -39,7 +40,14 @@ const updateReview= async(req,res)=>{
     res.send('updateReview')
 }  
 const deleteReview= async(req,res)=>{
-    res.send('deleteReview')
+    const {id:reviewId}= req.params
+    const isReviewExist= await Review.findOne({_id:reviewId})
+    if(!isReviewExist){
+        throw new CustomAPIError.NotFoundError('Review not found');
+    }
+    checkPermissions(req.user,isReviewExist.user)
+    await isReviewExist.remove()
+    res.status(StatusCodes.OK).json({ msg: "Success! Review Removed" })
 }  
 
 module.exports={
