@@ -25,10 +25,15 @@ const createReview = async (req, res) => {
 }
 const getAllReviews = async (req, res) => {
     const reviews= await Review.findOne({})
-    res.status(StatusCodes.OK).json({ reviews }); 
+    res.status(StatusCodes.OK).json({ reviews,count:reviews.length }); 
 }
 const getSingleReview= async(req,res)=>{
-    res.send('getSingleReview')
+    const {id:reviewId}=req.params;
+    const singleReview= await Review.findOne({_id:reviewId})
+    if(!singleReview){
+        throw new CustomAPIError.NotFoundError('Review not found');
+    }
+    res.status(StatusCodes.OK).json({ singleReview }); 
 }  
 const updateReview= async(req,res)=>{
     res.send('updateReview')
