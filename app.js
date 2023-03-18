@@ -5,6 +5,7 @@ const morgan=require('morgan')
 require('express-async-errors')
 const connectDB = require('./db/connect');
 const cookieParser = require("cookie-parser");
+const fileUpload = require('express-fileupload');
 // importing middlewares
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHanlderMiddleware = require("./middleware/error-handler");
@@ -16,6 +17,8 @@ const productRoutes= require('./routes/productRoutes')
 const app = express()
 app.use(morgan('tiny'));
 app.use(cookieParser(process.env.JWT_SECRET))
+app.use(express.static('./public'));
+app.use(fileUpload());
 // Middlewares
 app.use(express.json())
 
