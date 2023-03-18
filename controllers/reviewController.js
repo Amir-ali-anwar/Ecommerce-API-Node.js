@@ -37,7 +37,12 @@ const getSingleReview= async(req,res)=>{
     res.status(StatusCodes.OK).json({ singleReview }); 
 }  
 const updateReview= async(req,res)=>{
-    res.send('updateReview')
+    const {id:reviewId}= req.params;
+    const {ratin,title,comment}= req.body;
+    const review= await Review.findOne({_id:reviewId});
+    if(!review){
+        throw new CustomAPIError.NotFoundError(`Review not found with the id ${reviewId}`)
+    }
 }  
 const deleteReview= async(req,res)=>{
     const {id:reviewId}= req.params
