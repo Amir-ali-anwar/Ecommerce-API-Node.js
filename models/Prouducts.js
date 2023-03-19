@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const validator = require('validator')
-
 const ProductSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -66,6 +63,9 @@ const ProductSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'User',
         required: true,
-    }},{timestamps:true})
+    }
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } })
+
+
 
 module.exports = mongoose.model('Product', ProductSchema);
