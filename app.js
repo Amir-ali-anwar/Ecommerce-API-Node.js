@@ -28,7 +28,7 @@ app.use('/api/v1/auth',authRoutes)
 app.use('/api/v1/users',userRoutes)
 app.use('/api/v1/products',productRoutes)
 app.use('/api/v1/reviews',reviewRoutes)
-app.use('/api/v1/reviews',orderRoutes)
+app.use('/api/v1/orders',orderRoutes)
 
 // Error handler middlewares
 app.use(notFoundMiddleware)
