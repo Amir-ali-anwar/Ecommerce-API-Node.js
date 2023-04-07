@@ -28,8 +28,8 @@ const createOrders = async (req, res) => {
         image,
         product:_id 
     }
-    orderItems=[...orderItems,singleOrderItems]
-    
+    orderItems=[...orderItems,singleOrderItems] 
+    subtotal+=item.amount* price
     res.send('createorder')
 }
 const getAllOrders = async (req, res) => {
