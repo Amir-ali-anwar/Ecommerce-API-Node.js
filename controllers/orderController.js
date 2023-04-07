@@ -1,10 +1,13 @@
-// const Order = require('../models/Order');
+const Order = require('../models/Order');
 const Product = require('../models/Prouducts');
 
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
-// const { checkPermissions } = require('../utils');
-
+const { checkPermissions } = require('../utils');
+const fakeStripeAPI = async ({ amount, currency }) => {
+    const client_secret = 'someRandomValue';
+    return { client_secret, amount };
+  };
 const createOrders = async (req, res) => {
     const { items: cartItems, tax, shippingFee } = req.body;
     if (!cartItems || cartItems.length < 1) {
@@ -19,7 +22,7 @@ const createOrders = async (req, res) => {
         const dbproduct= await Product.findOne({_id:item.product});
         if(!dbproduct)
         throw new CustomError.NotFoundError("Item does not exist, please provide the valid item")
-    }   
+   
     const { name, price, image, _id } = dbproduct;
     const singleOrderItems= {
         amount:item.amount,
@@ -30,14 +33,37 @@ const createOrders = async (req, res) => {
     }
     orderItems=[...orderItems,singleOrderItems] 
     subtotal+=item.amount* price
-    res.send('createorder')
+}  
+   const total= tax+shippingFee+subtotal;
+   const paymentIntent = await fakeStripeAPI({
+    amount: total,
+    currency: 'usd',
+  });
+  const order = await Order.create({
+    orderItems,
+    total,
+    subtotal,
+    tax,
+    shippingFee,
+    clientSecret: paymentIntent.client_secret,
+    user: req.user.userId,
+  });
+
+  res.status(StatusCodes.OK).json({ order, clientSecret: order.clientSecret });
 }
 const getAllOrders = async (req, res) => {
-    res.send("getAllorders")
+    const orders = await Order.find({});
+  res.status(StatusCodes.OK).json({ orders, count: orders.length });
 }
 
 const getSingeOrder = async (req, res) => {
-    res.send("getSingeorder")
+   const {id:orderId}=req.params;
+   const order= await Order.findOne({_id:orderId})
+   if(!order){
+    throw new CustomError.BadRequestError("No order found")
+   }
+   checkPermissions(req.user,order.user)
+   res.status(StatusCodes.OK).json({ order });
 }
 const getCurentUserOrders = async (req, res) => {
     res.send("getCurentUserOrders")
