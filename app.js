@@ -6,6 +6,11 @@ require('express-async-errors')
 const connectDB = require('./db/connect');
 const cookieParser = require("cookie-parser");
 const fileUpload = require('express-fileupload');
+const rateLimiter = require('express-rate-limit');
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const cors = require('cors');
+const mongoSanitize = require('express-mongo-sanitize');
 // importing middlewares
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHanlderMiddleware = require("./middleware/error-handler");
@@ -17,7 +22,11 @@ const reviewRoutes= require('./routes/reviewRoutes')
 const orderRoutes= require('./routes/orderRoutes')
 // Packages
 const app = express()
-app.use(morgan('tiny'));
+app.use(helmet());
+app.use(xss());
+app.use(cors());
+app.use(cors());
+app.use(mongoSanitize('tiny'));
 app.use(cookieParser(process.env.JWT_SECRET))
 app.use(express.static('./public'));
 app.use(fileUpload());
