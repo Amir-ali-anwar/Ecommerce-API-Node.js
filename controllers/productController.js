@@ -15,7 +15,7 @@ const getAllProduct = async (req, res) => {
 }
 const getSingleProduct = async (req, res) => {
     const id = req.params.id;
-    const product = await Product.findById({ _id: id })
+    const product = await Product.findById({ _id: id }).populate('reviews').select('title comment')
     if (!product) {
         throw new CustomAPIError.NotFoundError(`Product not found with the id: ${id}`)
     }

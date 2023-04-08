@@ -31,10 +31,11 @@ const Userschema = new mongoose.Schema({
 })
 Userschema.pre('save', async function () {
     const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password,salt)
+    this.password = await bcrypt.hash(this.password, salt)
 });
-Userschema.methods.comparePassword= async function(candiatePassword){
-    const isMatch = await bcrypt.compare(candiatePassword,this.password)
-    return isMatch
-  }
+Userschema.methods.comparePassword = async function (candiatePassword) {
+    const isMatch = await bcrypt.compare(candiatePassword, this.password)
+    if (isMatch)  return true;
+    if (!isMatch) return false;
+}
 module.exports = mongoose.model('User', Userschema)
