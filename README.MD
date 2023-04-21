@@ -1,1 +1,1 @@
-This is the Node.js API which covers the features like user authentication,authorization, Cookies and many more.
+This is the Node.js API which covers the features like user authentication,authorization, Model schema methods, Cookies and many more.
